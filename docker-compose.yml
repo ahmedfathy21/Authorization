@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver_authsystem
+    environment:
+      - SA_PASSWORD=Your_password123
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserverdata:/var/opt/mssql
+
+volumes:
+  sqlserverdata:
