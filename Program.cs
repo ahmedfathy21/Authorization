@@ -1,6 +1,7 @@
 using AuthSystemAPI.Models;
 using AuthSystemAPI.Data;
 using AuthSystemAPI.Entities;
+using AuthSystemAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
@@ -8,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Configure Entity Framework with SQL Server provider
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -37,6 +40,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 var summaries = new[]
 {
