@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using AuthSystemAPI.Entities;
 namespace AuthSystemAPI.Models
 {
     public class ApplicationUser : IdentityUser
@@ -9,5 +10,8 @@ namespace AuthSystemAPI.Models
 
         // Example: If you want to track if a user is active
         public bool IsActive { get; set; } = true;
+
+        // Refresh tokens for JWT authentication
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }

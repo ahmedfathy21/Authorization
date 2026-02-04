@@ -17,6 +17,7 @@ namespace AuthSystemAPI.Data
         // Custom DbSets for Permission-Based Authorization
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -55,6 +56,19 @@ namespace AuthSystemAPI.Data
 
                 // Ensure unique combination of RoleId and PermissionId
                 entity.HasIndex(rp => new { rp.RoleId, rp.PermissionId }).IsUnique();
+            });
+
+            // Configure RefreshToken entity
+            builder.Entity<RefreshToken>(entity =>
+            {
+                entity.HasKey(rt => rt.Id);
+                entity.Property(rt => rt.Token).IsRequired().HasMaxLength(200);
+                entity.HasIndex(rt => rt.Token).IsUnique();
+
+                entity.HasOne(rt => rt.User)
+                    .WithMany(u => u.RefreshTokens)
+                    .HasForeignKey(rt => rt.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
         }

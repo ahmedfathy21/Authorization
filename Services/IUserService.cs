@@ -39,7 +39,7 @@ namespace AuthSystemAPI.Services
         Task<ApiResponseDto<PaginatedResultDto<UserResponseDto>>> GetAllUsersAsync(
             int pageNumber = 1, 
             int pageSize = 10, 
-            string searchTerm = null);
+            string? searchTerm = null);
 
         /// <summary>
         /// Update an existing user

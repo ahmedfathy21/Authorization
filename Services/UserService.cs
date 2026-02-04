@@ -13,12 +13,10 @@ namespace AuthSystemAPI.Services
     public class UserService : IUserService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ApplicationDbContext _context;
 
-        public UserService(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        public UserService(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
-            _context = context;
         }
 
         /// <summary>
@@ -144,7 +142,7 @@ namespace AuthSystemAPI.Services
         public async Task<ApiResponseDto<PaginatedResultDto<UserResponseDto>>> GetAllUsersAsync(
             int pageNumber = 1, 
             int pageSize = 10, 
-            string searchTerm = null)
+            string? searchTerm = null)
         {
             try
             {

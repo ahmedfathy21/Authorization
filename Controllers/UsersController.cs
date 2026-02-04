@@ -41,7 +41,7 @@ namespace AuthSystemAPI.Controllers
         public async Task<ActionResult<ApiResponseDto<PaginatedResultDto<UserResponseDto>>>> GetAllUsers(
             [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 10,
-            [FromQuery] string searchTerm = null)
+            [FromQuery] string? searchTerm = null)
         {
             var response = await _userService.GetAllUsersAsync(pageNumber, pageSize, searchTerm);
             return ToActionResult(response);
