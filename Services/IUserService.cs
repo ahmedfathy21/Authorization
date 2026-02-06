@@ -14,7 +14,7 @@ namespace AuthSystemAPI.Services
         /// <param name="createUserDto">User creation data</param>
         /// <returns>Created user response</returns>
         Task<ApiResponseDto<UserResponseDto>> CreateUserAsync(CreateUserDto createUserDto);
-
+        /// 
         /// <summary>
         /// Get user by ID
         /// </summary>
@@ -55,7 +55,14 @@ namespace AuthSystemAPI.Services
         /// <param name="userId">User ID</param>
         /// <returns>Success/failure response</returns>
         Task<ApiResponseDto<bool>> DeleteUserAsync(string userId);
-
+        
+        /// <summary>
+        /// Restore a soft-deleted user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task<ApiResponseDto<bool>> RestoreUserAsync(string userId);
+        
         /// <summary>
         /// Permanently delete a user from the database
         /// </summary>
@@ -85,5 +92,7 @@ namespace AuthSystemAPI.Services
         /// <param name="userId">User ID</param>
         /// <returns>List of role names</returns>
         Task<ApiResponseDto<List<string>>> GetUserRolesAsync(string userId);
+        
+        Task<ApiResponseDto<PaginatedResultDto<UserResponseDto>>> GetDeletedUsersAsync(int pageNumber = 1, int pageSize = 10);
     }
 }

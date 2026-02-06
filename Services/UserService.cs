@@ -185,7 +185,7 @@ namespace AuthSystemAPI.Services
                     Items = userResponses,
                     PageNumber = pageNumber,
                     PageSize = pageSize,
-                    TotalCount = totalCount,
+                    TotalItems = totalCount,
                     TotalPages = totalPages,
                     HasNextPage = pageNumber < totalPages,
                     HasPreviousPage = pageNumber > 1
@@ -272,6 +272,93 @@ namespace AuthSystemAPI.Services
             catch (Exception ex)
             {
                 return new ApiResponseDto<bool>("An error occurred while deleting the user", 
+                    new List<string> { ex.Message });
+            }
+        }
+
+        public async Task<ApiResponseDto<bool>> RestoreUserAsync(string userId)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    return new ApiResponseDto<bool>("User not found",
+                        new List<string>{ "No user found with ID '{userId}'"});
+                }
+                user.IsActive = true;
+                var result = await _userManager.UpdateAsync(user);
+
+                if (!result.Succeeded)
+                {
+                    return new ApiResponseDto<bool>("Failed to restore user",
+                        result.Errors.Select(e => e.Description).ToList());
+                }
+                return new ApiResponseDto<bool>(true, "User restored successfully");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponseDto<bool>("An error occurred while restoring the user",
+                    new List<string>{ ex.Message });
+            }
+
+        }
+        
+        /// <summary>
+        /// Get all soft-deleted users (IsActive = false)
+        /// </summary>
+        public async Task<ApiResponseDto<PaginatedResultDto<UserResponseDto>>> GetDeletedUsersAsync(
+            int pageNumber = 1,
+            int pageSize = 10)
+        {
+            try
+            {
+                // Validate pagination parameters
+                if (pageNumber < 1) pageNumber = 1;
+                if (pageSize < 1) pageSize = 10;
+                if (pageSize > 100) pageSize = 100; // Limit max page size
+
+                // Query only deleted users (IsActive = false)
+                var query = _userManager.Users.Where(u => !u.IsActive);
+
+                // Get total count
+                var totalItems = await query.CountAsync();
+
+                // Calculate pagination
+                var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+                // Get users for current page
+                var users = await query
+                    .OrderBy(u => u.UserName)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                // Map to response DTOs
+                var userResponseDtos = new List<UserResponseDto>();
+                foreach (var user in users)
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+                    userResponseDtos.Add(MapToUserResponseDto(user, roles.ToList()));
+                }
+
+                var paginatedResult = new PaginatedResultDto<UserResponseDto>
+                {
+                    Items = userResponseDtos,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    TotalItems = totalItems,
+                    TotalPages = totalPages
+                };
+
+                return new ApiResponseDto<PaginatedResultDto<UserResponseDto>>(
+                    paginatedResult,
+                    $"Retrieved {userResponseDtos.Count} deleted users");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponseDto<PaginatedResultDto<UserResponseDto>>(
+                    "An error occurred while retrieving deleted users",
                     new List<string> { ex.Message });
             }
         }

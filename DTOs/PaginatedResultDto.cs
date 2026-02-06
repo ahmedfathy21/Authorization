@@ -25,8 +25,7 @@ namespace AuthSystemAPI.DTOs
         /// <summary>
         /// Total number of items across all pages
         /// </summary>
-        public int TotalCount { get; set; }
-
+        public int TotalItems { get; set; }
         /// <summary>
         /// Total number of pages
         /// </summary>
@@ -41,5 +40,7 @@ namespace AuthSystemAPI.DTOs
         /// Whether there is a previous page
         /// </summary>
         public bool HasPreviousPage { get; set; }
+
+        
     }
 }

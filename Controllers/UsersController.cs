@@ -15,7 +15,6 @@ namespace AuthSystemAPI.Controllers
         {
             _userService = userService;
         }
-
         [HttpPost]
         public async Task<ActionResult<ApiResponseDto<UserResponseDto>>> CreateUser([FromBody] CreateUserDto createUserDto)
         {
@@ -62,7 +61,24 @@ namespace AuthSystemAPI.Controllers
             var response = await _userService.DeleteUserAsync(userId);
             return ToActionResult(response);
         }
-
+        
+        /// <summary>
+        /// Get all soft-deleted users
+        /// </summary>
+        [HttpGet("deleted")]
+        public async Task<ActionResult<ApiResponseDto<PaginatedResultDto<UserResponseDto>>>> GetDeletedUsers(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var response = await _userService.GetDeletedUsersAsync(pageNumber, pageSize);
+            return ToActionResult(response);
+        }
+        [HttpPost("{userId}/restore")]
+        public async Task<ActionResult<ApiResponseDto<bool>>> RestoreUser(string userId)
+        {
+            var response = await _userService.RestoreUserAsync(userId);
+            return ToActionResult(response);
+        }
         [HttpDelete("{userId}/permanent")]
         public async Task<ActionResult<ApiResponseDto<bool>>> PermanentlyDeleteUser(string userId)
         {
