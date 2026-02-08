@@ -6,6 +6,7 @@ using AuthSystemAPI.Data;
 using AuthSystemAPI.DTOs;
 using AuthSystemAPI.Entities;
 using AuthSystemAPI.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +21,7 @@ namespace AuthSystemAPI.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly string _jwtKey;
         private readonly string _jwtIssuer;
         private readonly string _jwtAudience;
@@ -30,11 +32,13 @@ namespace AuthSystemAPI.Services
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ApplicationDbContext context,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
 
             _jwtKey = configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is missing");
             _jwtIssuer = configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT Issuer is missing");
@@ -72,7 +76,17 @@ namespace AuthSystemAPI.Services
                     UserId = user.Id
                 };
 
+                var httpContext = _httpContextAccessor.HttpContext;
+                var loginUserEntity = new LoginUser
+                {
+                    UserId = user.Id,
+                    LoggedInAt = DateTime.UtcNow,
+                    IpAddress = httpContext?.Connection.RemoteIpAddress?.ToString(),
+                    UserAgent = httpContext?.Request.Headers.UserAgent.ToString()
+                };
+
                 _context.RefreshTokens.Add(refreshTokenEntity);
+                _context.LoginUsers.Add(loginUserEntity);
                 await _context.SaveChangesAsync();
 
                 var response = new AuthResponseDto

@@ -13,5 +13,8 @@ namespace AuthSystemAPI.Models
 
         // Refresh tokens for JWT authentication
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+
+        // Login sessions for auditing
+        public ICollection<LoginUser> LoginUsers { get; set; } = new List<LoginUser>();
     }
 }

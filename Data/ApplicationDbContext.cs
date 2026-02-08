@@ -18,6 +18,7 @@ namespace AuthSystemAPI.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<LoginUser> LoginUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -71,6 +72,19 @@ namespace AuthSystemAPI.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            // Configure LoginUser entity
+            builder.Entity<LoginUser>(entity=>
+            {
+            entity.HasKey(lu => lu.Id);
+            entity.Property(lu => lu.UserId).IsRequired();
+            entity.Property(lu => lu.IpAddress).HasMaxLength(64);
+            entity.Property(lu => lu.UserAgent).HasMaxLength(256);
+
+            entity.HasOne(lu => lu.User)
+                .WithMany(u => u.LoginUsers)
+                .HasForeignKey(lu => lu.UserId)
+                .OnDelete(DeleteBehavior.Cascade); 
+            });
         }
     }
     
