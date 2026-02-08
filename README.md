@@ -73,6 +73,14 @@ Manages JWT refresh tokens for secure token rotation
 - `UserId` (FK) - references Users.Id, cascade delete
 - **Computed Property**: `IsActive` → checks if not revoked and not expired
 
+#### **LoginUsers** (Custom)
+Audits successful login sessions
+- `Id` (PK) - int, auto-increment
+- `UserId` (FK) - references Users.Id, cascade delete
+- `LoggedInAt` - DateTime (UTC)
+- `IpAddress` - nvarchar(64), optional
+- `UserAgent` - nvarchar(512), optional
+
 ---
 
 ## 🛠️ Technology Stack
@@ -168,6 +176,8 @@ Inherits from `IdentityDbContext<ApplicationUser, ApplicationRole, string>`
 ```csharp
 public DbSet<Permission> Permissions { get; set; }
 public DbSet<RolePermission> RolePermissions { get; set; }
+public DbSet<RefreshToken> RefreshTokens { get; set; }
+public DbSet<LoginUser> LoginUsers { get; set; }
 ```
 
 **Relationships Configured in OnModelCreating():**
@@ -223,6 +233,8 @@ The system uses **JWT (JSON Web Tokens)** with **Refresh Token Rotation** for se
    ↓
 2. Server generates Access Token (30 min) + Refresh Token (7 days)
    ↓
+2.1 Server writes LoginUsers audit record (UserId, LoggedInAt, IpAddress, UserAgent)
+  ↓
 3. Client stores both tokens
    ↓
 4. Access Token expires → Client uses Refresh Token to get new Access Token
