@@ -16,6 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuditService, AuditService>();
 
 // Configure Entity Framework with SQL Server provider
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
