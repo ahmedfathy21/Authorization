@@ -27,10 +27,8 @@ namespace AuthSystemAPI.Data
             builder.Entity<ApplicationRole>().ToTable("Roles");
             builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserRole<string>>().ToTable("UserRoles");
             builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserClaim<string>>().ToTable("UserClaims");
+            builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserLogin<string>>().ToTable("UserLogins");
             builder.Entity<Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>>().ToTable("RoleClaims");
-
-            // Disable external login provider storage (UserLogins table)
-            builder.Ignore<Microsoft.AspNetCore.Identity.IdentityUserLogin<string>>();
 
             // Configure Permission entity
             builder.Entity<Permission>(entity =>

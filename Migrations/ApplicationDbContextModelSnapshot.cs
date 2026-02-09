@@ -76,7 +76,7 @@ namespace AuthSystemAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("LoginUsers");
+                    b.ToTable("LoginUsers", (string)null);
                 });
 
             modelBuilder.Entity("AuthSystemAPI.Entities.Permission", b =>
@@ -99,7 +99,7 @@ namespace AuthSystemAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissions");
+                    b.ToTable("Permissions", (string)null);
                 });
 
             modelBuilder.Entity("AuthSystemAPI.Entities.RefreshToken", b =>
@@ -138,7 +138,7 @@ namespace AuthSystemAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("AuthSystemAPI.Entities.RolePermission", b =>
@@ -163,7 +163,7 @@ namespace AuthSystemAPI.Migrations
                     b.HasIndex("RoleId", "PermissionId")
                         .IsUnique();
 
-                    b.ToTable("RolePermissions");
+                    b.ToTable("RolePermissions", (string)null);
                 });
 
             modelBuilder.Entity("AuthSystemAPI.Models.ApplicationUser", b =>
@@ -292,6 +292,28 @@ namespace AuthSystemAPI.Migrations
                     b.ToTable("UserClaims", (string)null);
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserLogins", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
@@ -377,6 +399,15 @@ namespace AuthSystemAPI.Migrations
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("AuthSystemAPI.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.HasOne("AuthSystemAPI.Models.ApplicationUser", null)
                         .WithMany()

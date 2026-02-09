@@ -59,6 +59,7 @@ Maps roles to permissions (many-to-many)
 
 #### **Additional Identity Tables**
 - `UserClaims` - Store user-specific claims
+- `UserLogins` - Track external login providers
 - `RoleClaims` - Store role-specific claims
 
 #### **RefreshTokens** (Custom)
