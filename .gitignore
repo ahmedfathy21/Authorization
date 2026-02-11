@@ -9,3 +9,6 @@ obj/
 .vs/
 .vscode/
 appsettings.Development.json
+.idea/
+.cursor/
+AuthorizationDirectorySetup.sh
